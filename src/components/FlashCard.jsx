@@ -1,21 +1,18 @@
 import { useEffect, useState } from 'react';
 import './FlashCard.css';
 
-function FlashCard({
+const FlashCard = ({
 	title = 'Card Title',
-	description = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam rutrum dictum sodales.',
+	description = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
 	showCardTitle = true,
-}) {
+}) => {
 	const [showTitle, setShowTitle] = useState(true);
 
 	useEffect(() => {
 		setShowTitle(showCardTitle);
-	}, []);
+	}, [showCardTitle]);
 
-	function handleCardClick() {
-		// setShowTitle(!showTitle);
-		setShowTitle(currentShowTitle => !currentShowTitle);
-	}
+	const handleCardClick = () => setShowTitle(currentShowTitle => !currentShowTitle);
 
 	return (
 		<>
@@ -26,6 +23,6 @@ function FlashCard({
 			</div>
 		</>
 	);
-}
+};
 
 export default FlashCard;
