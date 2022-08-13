@@ -3,7 +3,13 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 
 import { helperShuffleArray } from '../helpers/arrayHelpers';
-import { deleteCard, getFlashCards, createCard, getAllFlashCards, updateCard } from '../services/apiService';
+import {
+	deleteFlashCard,
+	getFlashCards,
+	createFlashCard,
+	getAllFlashCards,
+	updateFlashCard,
+} from '../services/apiService';
 import { toast } from 'react-toastify';
 
 import FlashCard from '../components/FlashCard';
@@ -47,7 +53,7 @@ const FlashCardsPage = () => {
 	const handleRadioButtonShowDescription = () => setShowAllTitles(false);
 
 	const handleDeleteFlashCard = async cardId => {
-		const removeCard = await toast.promise(deleteCard(cardId), {
+		const removeCard = await toast.promise(deleteFlashCard(cardId), {
 			pending: 'Deleting  flash card',
 			success: 'Successfully deleted flash card',
 			error: 'There was a problem. Could not delete a flash card',
@@ -59,22 +65,25 @@ const FlashCardsPage = () => {
 	const handleSubmitForm = async flashCard => {
 		if (flashCard.id) {
 			console.log('updating flash card', flashCard);
-			const updatedFlashCard = await toast.promise(updateCard(flashCard), {
+			const updatedFlashCard = await toast.promise(updateFlashCard(flashCard), {
 				pending: 'Editing  a flash card',
 				success: 'Successfully edited flash card',
 				error: 'There was a problem. Could not edit a flash card',
 			});
 			if (!updatedFlashCard) return;
-			const newData = [...data];
-			const flashCardIndex = newData.findIndex(card => card.id === flashCard.id);
-			newData[flashCardIndex] = updatedFlashCard;
-			setData(newData);
+			setData(
+				data.map(card =>
+					card.id === flashCard.id
+						? { ...card, title: flashCard.title, description: flashCard.description }
+						: card
+				)
+			);
 			setTabIndex(0);
 			console.log('flash card updated', updatedFlashCard);
 		} else {
 			console.log('creating flash card');
 			flashCard = { id: getNewId(), ...flashCard };
-			const createdFlashCard = await toast.promise(createCard(flashCard), {
+			const createdFlashCard = await toast.promise(createFlashCard(flashCard), {
 				pending: 'Adding a new flash card',
 				success: 'Successfully registered flash card',
 				error: 'There was a problem. Could not add a new flash card',
@@ -108,7 +117,7 @@ const FlashCardsPage = () => {
 	return (
 		<>
 			<Tabs onSelect={handleTabSelect} selectedIndex={tabIndex}>
-				<TabList>
+				<TabList className="border-b mb-5">
 					<Tab>List</Tab>
 					<Tab>Create</Tab>
 					<Tab>Study</Tab>

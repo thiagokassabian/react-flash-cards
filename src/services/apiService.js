@@ -1,25 +1,31 @@
-import { getAll, remove, add, update } from "./httpService";
+import { getAll, remove, add, update, get } from "./httpService";
 
-const BASE_URL = 'http://localhost:3001/flashcards'
+// const BASE_URL = 'http://localhost:3001/flashcards'
+const FLASHCARDS_URL = '/flashcards'
 
 const getAllFlashCards = async () => {
-	const allFlashCards = await getAll(BASE_URL)
+	const allFlashCards = await getAll(FLASHCARDS_URL)
 	return allFlashCards
 }
 
-const deleteCard = async id => {
-	const deletedCard = await remove(BASE_URL, id)
+const getFlashCard = async id => {
+	const card = await get(`${FLASHCARDS_URL}/${id}`)
+	return card
+}
+
+const deleteFlashCard = async id => {
+	const deletedCard = await remove(`${FLASHCARDS_URL}/${id}`)
 	return deletedCard
 }
 
-const createCard = async flashCard => {
-	const createdCard = await add(BASE_URL, flashCard)
+const createFlashCard = async flashCard => {
+	const createdCard = await add(FLASHCARDS_URL, flashCard)
 	return createdCard
 }
 
-const updateCard = async flashCard => {
-	const updatedCard = await update(BASE_URL, flashCard)
+const updateFlashCard = async flashCard => {
+	const updatedCard = await update(`${FLASHCARDS_URL}/${flashCard.id}`, flashCard)
 	return updatedCard
 }
 
-export { getAllFlashCards, deleteCard, createCard, updateCard }
+export { getAllFlashCards, deleteFlashCard, createFlashCard, updateFlashCard, getFlashCard }
