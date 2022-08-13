@@ -1,16 +1,20 @@
 import { PencilIcon, TrashIcon } from '@heroicons/react/solid';
 import Button from './Button';
 
-const FlashCardItem = ({ children: flashCard, onDelete = null }) => {
+const FlashCardItem = ({ children: flashCard, onDelete = null, onEdit = null }) => {
 	const { id, title, description } = flashCard;
 
 	const handleButtonDelete = () => {
 		if (onDelete) onDelete(id);
 	};
 
+	const handleButtonEdit = () => {
+		if (onEdit) onEdit(flashCard);
+	};
+
 	return (
 		<>
-			<ul>
+			<ul className="mb-2">
 				<li>
 					<strong>Title:</strong> {title}
 				</li>
@@ -19,11 +23,11 @@ const FlashCardItem = ({ children: flashCard, onDelete = null }) => {
 				</li>
 			</ul>
 			<div className="flex justify-end space-x-2">
-				<Button>
-					<PencilIcon className="h-5 w-5 text-white" />
+				<Button onButtonClick={handleButtonEdit}>
+					<PencilIcon className="h-3 w-3 text-white" />
 				</Button>
 				<Button onButtonClick={handleButtonDelete}>
-					<TrashIcon className="h-5 w-5 text-white" />
+					<TrashIcon className="h-3 w-3 text-white" />
 				</Button>
 			</div>
 		</>

@@ -1,7 +1,7 @@
 function Header({ title }) {
 	return (
 		<div className="bg-gray-200">
-			<div className="container mx-auto py-5">
+			<div className="container mx-auto py-5 px-4">
 				<h1>{title}</h1>
 			</div>
 		</div>

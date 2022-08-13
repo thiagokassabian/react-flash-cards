@@ -3,7 +3,8 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 
 import { helperShuffleArray } from '../helpers/arrayHelpers';
-import { deleteCard, getFlashCards } from '../services/apiService';
+import { deleteCard, getFlashCards, createCard, getAllFlashCards, updateCard } from '../services/apiService';
+import { toast } from 'react-toastify';
 
 import FlashCard from '../components/FlashCard';
 import Button from '../components/Button';
@@ -11,22 +12,23 @@ import RadioButton from '../components/RadioButton';
 import Loading from '../components/Loading';
 import Error from '../components/Error';
 import FlashCardItem from '../components/FlashCardItem';
+import FormFlashCard from '../components/FormFlashCard';
+import { getNewId } from '../services/idService';
 
 const FlashCardsPage = () => {
 	const [data, setData] = useState([]);
 	const [showAllTitles, setShowAllTitles] = useState(true);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState('');
+	const [selectedFlashCard, setSelectedFlashCard] = useState(null);
+	const [tabIndex, setTabIndex] = useState(0);
 
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				// const dataFromServer = await getData();
-				const allFlashCards = await getFlashCards();
-				setTimeout(() => {
-					setData(allFlashCards);
-					setLoading(false);
-				}, 500);
+				const allFlashCards = await getAllFlashCards();
+				setData(allFlashCards);
+				setLoading(false);
 			} catch (err) {
 				console.log(err);
 				setError(err.message);
@@ -35,16 +37,8 @@ const FlashCardsPage = () => {
 		fetchData();
 	}, []);
 
-	//* FETCH DE DADOS LOCAL */
-	// async function getData() {
-	// 	const response = await fetch('./flashcards_v1.json');
-	// 	const jsonData = await response.json();
-	// 	return jsonData;
-	// }
-
 	const handleClickShuffle = () => {
-		const dataToShuffle = [...data];
-		const newShuffledData = helperShuffleArray(dataToShuffle);
+		const newShuffledData = helperShuffleArray([...data]);
 		setData(newShuffledData);
 	};
 
@@ -53,11 +47,53 @@ const FlashCardsPage = () => {
 	const handleRadioButtonShowDescription = () => setShowAllTitles(false);
 
 	const handleDeleteFlashCard = async cardId => {
-		const removeCard = await deleteCard(cardId);
-		if (removeCard) {
-			const newData = [...data].filter(card => card.id !== cardId);
+		const removeCard = await toast.promise(deleteCard(cardId), {
+			pending: 'Deleting  flash card',
+			success: 'Successfully deleted flash card',
+			error: 'There was a problem. Could not delete a flash card',
+		});
+		if (!removeCard) return;
+		setData(currentData => [...currentData].filter(card => card.id !== cardId));
+	};
+
+	const handleSubmitForm = async flashCard => {
+		if (flashCard.id) {
+			console.log('updating flash card', flashCard);
+			const updatedFlashCard = await toast.promise(updateCard(flashCard), {
+				pending: 'Editing  a flash card',
+				success: 'Successfully edited flash card',
+				error: 'There was a problem. Could not edit a flash card',
+			});
+			if (!updatedFlashCard) return;
+			const newData = [...data];
+			const flashCardIndex = newData.findIndex(card => card.id === flashCard.id);
+			newData[flashCardIndex] = updatedFlashCard;
 			setData(newData);
+			setTabIndex(0);
+			console.log('flash card updated', updatedFlashCard);
+		} else {
+			console.log('creating flash card');
+			flashCard = { id: getNewId(), ...flashCard };
+			const createdFlashCard = await toast.promise(createCard(flashCard), {
+				pending: 'Adding a new flash card',
+				success: 'Successfully registered flash card',
+				error: 'There was a problem. Could not add a new flash card',
+			});
+			if (!createdFlashCard) return;
+			setData(currentData => [...currentData, createdFlashCard]);
+			setTabIndex(0);
+			console.log('flash card created', createdFlashCard);
 		}
+	};
+
+	const handleEditFlashCard = flashCard => {
+		setSelectedFlashCard(flashCard);
+		setTabIndex(1);
+	};
+
+	const handleTabSelect = index => {
+		setSelectedFlashCard(null);
+		setTabIndex(index);
 	};
 
 	if (error) return <Error>{error}</Error>;
@@ -71,7 +107,7 @@ const FlashCardsPage = () => {
 
 	return (
 		<>
-			<Tabs>
+			<Tabs onSelect={handleTabSelect} selectedIndex={tabIndex}>
 				<TabList>
 					<Tab>List</Tab>
 					<Tab>Create</Tab>
@@ -79,10 +115,13 @@ const FlashCardsPage = () => {
 				</TabList>
 
 				<TabPanel>
-					<div className="flex flex-col space-y-2">
+					<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
 						{data.map(card => (
-							<div key={card.id} className="border rounded p-3">
-								<FlashCardItem key={card.id} onDelete={handleDeleteFlashCard}>
+							<div key={card.id} className="border rounded p-3 flex flex-col justify-between">
+								<FlashCardItem
+									key={card.id}
+									onDelete={handleDeleteFlashCard}
+									onEdit={handleEditFlashCard}>
 									{card}
 								</FlashCardItem>
 							</div>
@@ -90,7 +129,7 @@ const FlashCardsPage = () => {
 					</div>
 				</TabPanel>
 				<TabPanel>
-					<h2>Any content 2</h2>
+					<FormFlashCard onSubmitForm={handleSubmitForm}>{selectedFlashCard}</FormFlashCard>
 				</TabPanel>
 				<TabPanel>
 					<div className="mb-3 text-right">
@@ -111,7 +150,7 @@ const FlashCardsPage = () => {
 						</RadioButton>
 					</div>
 
-					<div className="grid grid-cols-2 gap-4">
+					<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
 						{data.map(({ id, title, description }) => (
 							<FlashCard key={id} title={title} description={description} showCardTitle={showAllTitles} />
 						))}

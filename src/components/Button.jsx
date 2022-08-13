@@ -1,13 +1,13 @@
-function Button({ children: description = 'Button', onButtonClick = null }) {
-	function handleButtonClick() {
+const Button = ({ children: description = 'Button', type = 'button', disabled = false, onButtonClick = null }) => {
+	const handleButtonClick = () => {
 		if (onButtonClick) onButtonClick();
-	}
+	};
 
 	return (
-		<button className="btn btn-primary" onClick={handleButtonClick}>
+		<button className="btn btn-primary" type={type} disabled={disabled} onClick={handleButtonClick}>
 			{description}
 		</button>
 	);
-}
+};
 
 export default Button;
