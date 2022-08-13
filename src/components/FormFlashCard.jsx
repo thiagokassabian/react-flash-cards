@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import useForm from '../hooks/useForm';
 import Button from './Button';
 import Input from './Input';
@@ -6,7 +6,7 @@ import TextArea from './TextArea';
 
 const FormFlashCard = ({ children: selectedFlashCard, onSubmitForm = null }) => {
 	const [
-		{ valid, values, loading },
+		{ values },
 		handleChange,
 		handleBlur,
 		handleSubmit,

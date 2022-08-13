@@ -4,7 +4,6 @@ const useForm = callback => {
 	const [initialValues, setInitialValues] = useState({});
 	const [values, setValues] = useState({});
 	const [loading, setLoading] = useState(false);
-	const [valid, setValid] = useState(false);
 
 	const handleSelectedItem = selectedValues => {
 		setValues(selectedValues);
@@ -38,7 +37,7 @@ const useForm = callback => {
 	const isFormValid = () => Object.keys(values).every(k => !!values[k].trim());
 
 	return [
-		{ valid, values, loading },
+		{ values, loading },
 		handleChange,
 		handleBlur,
 		handleSubmit,

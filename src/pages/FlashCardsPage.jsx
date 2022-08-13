@@ -3,13 +3,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 
 import { helperShuffleArray } from '../helpers/arrayHelpers';
-import {
-	deleteFlashCard,
-	getFlashCards,
-	createFlashCard,
-	getAllFlashCards,
-	updateFlashCard,
-} from '../services/apiService';
+import { deleteFlashCard, createFlashCard, getAllFlashCards, updateFlashCard } from '../services/apiService';
 import { toast } from 'react-toastify';
 
 import FlashCard from '../components/FlashCard';

@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const axiosInstance = axios.create({ baseURL: 'https://flashcards-backend-tkassabian.glitch.me' })
+const BASE_URL = process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : 'https://flashcards-backend-tkassabian.glitch.me'
+
+const axiosInstance = axios.create({ baseURL: BASE_URL })
 
 const getAll = async url => {
 	const { data } = await axiosInstance.get(url)
