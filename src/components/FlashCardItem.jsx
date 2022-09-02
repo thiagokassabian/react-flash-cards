@@ -1,16 +1,16 @@
-import { PencilIcon, TrashIcon } from '@heroicons/react/solid';
-import Button from './Button';
+import { PencilIcon, TrashIcon } from "@heroicons/react/solid"
+import Button from "./Button"
 
 const FlashCardItem = ({ children: flashCard, onDelete = null, onEdit = null }) => {
-	const { id, title, description } = flashCard;
+	const { id, title, description } = flashCard
 
 	const handleButtonDelete = () => {
-		if (onDelete) onDelete(id);
-	};
+		if (onDelete) onDelete(id)
+	}
 
 	const handleButtonEdit = () => {
-		if (onEdit) onEdit(flashCard);
-	};
+		if (onEdit) onEdit(flashCard)
+	}
 
 	return (
 		<>
@@ -31,7 +31,7 @@ const FlashCardItem = ({ children: flashCard, onDelete = null, onEdit = null }) 
 				</Button>
 			</div>
 		</>
-	);
-};
+	)
+}
 
-export default FlashCardItem;
+export default FlashCardItem
