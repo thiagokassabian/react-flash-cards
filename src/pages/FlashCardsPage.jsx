@@ -14,7 +14,7 @@ import ListFlashCards from "../components/ListFlashCards"
 
 const FlashCardsPage = () => {
 	const dispatch = useDispatch()
-	const { value: data, tab } = useSelector(state => state.flashcards)
+	const { tab } = useSelector(state => state.flashcards)
 
 	const [error, setError] = useState("")
 
